@@ -1,0 +1,87 @@
+@startuml SAE_UML_Version3
+skinparam backgroundColor #FFFFFF
+skinparam classBackgroundColor #FFF9DB
+skinparam classBorderColor #000000
+skinparam classFontColor #000000
+skinparam classFontSize 16
+skinparam classFontStyle bold
+skinparam classAttributeFontColor #000000
+skinparam classAttributeFontSize 14
+skinparam classAttributeFontStyle normal
+skinparam classStereotypeFontColor #000000
+skinparam classStereotypeFontSize 12
+skinparam classStereotypeFontStyle italic
+skinparam shadowing false
+skinparam ArrowColor #000000
+skinparam ArrowFontColor #000000
+skinparam interfaceBackgroundColor #FFF9DB
+skinparam interfaceBorderColor #000000
+skinparam interfaceFontColor #000000
+skinparam interfaceFontSize 16
+skinparam interfaceFontStyle bold
+skinparam interfaceStereotypeFontColor #000000
+skinparam interfaceStereotypeFontSize 12
+skinparam interfaceStereotypeFontStyle italic
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+class Adolescent {
+    ...
+    ---
+    + addCriterion(Criteria, String, boolean): void
+    + isCompatible(Adolescent): boolean
+    + isFrenchCompatible(Adolescent): boolean
+    - isFrenchParticipantInvolved(Adolescent): boolean
+    - hasCommonHobbies(Adolescent): boolean
+    - parseHobbies(String, String): Set<String>
+    + isHistoryCompatible(Adolescent): boolean
+    + animalScore(Adolescent): int
+    + dietScore(Adolescent): int
+    + getHistoryAffinityBonus(Adolescent): int
+    + calculateAffinity(Adolescent): int
+    + calculateAgeDifference(Adolescent): double
+}
+
+class Affectation {
+  - hosts: List<Adolescent>
+  - visitors: List<Adolescent>
+  ---
+  + calculatePairing(): Map<Adolescent, Adolescent>
+  - hungarianAlgorithm(int[][]): int[]
+}
+
+enum Criteria {
+  ...
+  ---
+  + getType(): char
+  + isValid(String): boolean
+}
+
+class CSVService {
+  ...
+  ---
+  + importAdolescents(String, boolean): List<Adolescent>
+  - parseHeaders(BufferedReader, String): Map<String, Integer>
+  - processDataLine(String, Map<String, Integer>, boolean, List<Adolescent>): void
+  - extractCriteria(String[], Map<String, Integer>, boolean): Map<Criteria, String>
+  - isNullableField(Criteria): boolean
+  - createAdolescent(String[], Map<String, Integer>, Map<Criteria, String>, boolean): Adolescent
+  + exportAffectations(Map<Adolescent, Adolescent>, String): void
+  - logError(String, String, Exception): void
+}
+
+class HistoryService {
+  ...
+  ---
+  + saveAffectationHistory(Map<String, Affectation>, String): void
+  + loadAffectationHistory(String): Map<String, Affectation>
+}
+
+Affectation --> "*" Adolescent : uses
+Adolescent --> "*" Criteria : uses
+CSVService ..> Adolescent : creates
+CSVService ..> Criteria : uses
+CSVService ..> Affectation : uses (for export)
+HistoryService ..> Affectation : saves/loads
+
+@enduml
